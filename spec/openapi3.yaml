@@ -1,0 +1,3867 @@
+openapi: 3.0.0
+info:
+  title: Sponsus API
+  contact:
+    name: Sponsus
+    email: developers@sponsus.org
+  version: 1.0.1
+  description: API spec for api.sponsus.org
+servers:
+  - url: 'https://api-dev.sponsus.org'
+    variables: {}
+    description: Dev server
+paths:
+  /v1/auth/@me:
+    post:
+      tags:
+        - authentication
+      summary: Update your account
+      description: Update user account
+      operationId: authentication.manage_user_account
+      parameters: []
+      requestBody:
+        description: Your username
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updates'
+        required: false
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+              example: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+  /v1/payments/@me/tiers:
+    post:
+      tags:
+        - payments
+      summary: Create a new tier
+      description: Requires payments.tiers.write
+      operationId: payments.manage_tiers.post
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            encoding: {}
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+        required: false
+      responses:
+        '201':
+          description: Returns the created tier
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  tier:
+                    $ref: '#/components/schemas/Tier'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+    get:
+      tags:
+        - payments
+      summary: Get your tiers
+      description: Requires payments.tiers.read
+      operationId: payments.manage_tiers.get
+      parameters: []
+      responses:
+        '200':
+          description: Returns your tiers
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  tier:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tier'
+              example:
+                success: true
+                tiers:
+                  - _id: 1732814647763013600
+                    title: 'Sponsor Sponsus!'
+                    price: 5
+                    description: 'Demo tier!'
+                    userID: 1729788214794915800
+                    advanced:
+                      limit:
+                        enabled: true
+                        max: 6
+                      discord_role:
+                        name: Writing Team
+                        id: 622152828831662100
+                    created_at: 1556109440
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+  '/v1/payments/@me/tiers/{tierID}':
+    delete:
+      summary: Delete a tier
+      description: Delete a tier
+      operationId: payments.manage_tier.delete
+      parameters:
+        - name: tierID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      tags:
+        - payments
+      security:
+        - ApiKeyAuth: []
+    post:
+      tags:
+        - payments
+      summary: Update a tier
+      description: Requires payments.tiers.write
+      operationId: payments.manage_tier.post
+      parameters:
+        - name: tierID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            encoding: {}
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                advanced:
+                  type: object
+                  properties:
+                    limit:
+                      type: object
+                      properties:
+                        enabled:
+                          type: boolean
+                        max:
+                          type: number
+                    discord_role:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+        required: false
+        description: ''
+      responses:
+        '200':
+          description: Update successful
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+              example: {}
+        '401':
+          description: You do not have permission to write to payments.tiers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '403':
+          description: You do not have write access to this tier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+    parameters:
+      - schema:
+          type: string
+        name: tierID
+        in: path
+        description: ''
+        required: true
+  '/v1/profiles/{userID}/per_month':
+    get:
+      tags:
+        - profile
+      summary: Get a creators amount per month
+      description: Get
+      operationId: profile.calc_per_month.get
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile.calc_per_month.getResponse'
+              example:
+                success: true
+                total: 10
+                sponsors: 2
+      deprecated: false
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+  '/v1/profiles/{userID}/post_tags':
+    get:
+      tags:
+        - profile
+      summary: Get a creators post tags
+      description: Get a creators post tags
+      operationId: profile.get_post_tags
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile.get_post_tagsResponse'
+              example: {}
+      deprecated: false
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+  '/v1/profiles/{userID}/post_total':
+    get:
+      tags:
+        - profile
+      summary: profile.get_post_total
+      description: Gets a total of all posts released by this creator (for use in the frontend)
+      operationId: profile.get_post_total
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile.get_post_totalResponse'
+      deprecated: false
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+  /v1/profiles/@me:
+    get:
+      tags:
+        - profile
+      summary: Get a creators profile
+      description: |-
+        Requires profile.profile.read
+
+        @me means that this request is local to the creator. This will only return results for the logged in user.
+      operationId: profile.user_profile.get
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile.get_set_user_profile.getResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+    post:
+      tags:
+        - profile
+      summary: profile.get_set_user_profile.post
+      description: Requires profile.profile.write
+      operationId: profile.user_profile.post
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            encoding: {}
+            schema:
+              type: object
+              properties:
+                nickname:
+                  type: string
+                about:
+                  type: string
+                description:
+                  type: string
+                cards:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      content:
+                        type: string
+                      image:
+                        type: string
+                      link:
+                        type: string
+                theme:
+                  type: string
+                is_nsfw:
+                  type: boolean
+                tags:
+                  type: array
+                  items:
+                    type: string
+        required: false
+        description: You can send a minimum of 1 field to update. This will only update fields present in the the request.
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+    parameters: []
+  '/v1/profiles/{userID}':
+    get:
+      tags:
+        - profile
+      summary: Get a creators profile
+      description: Get a creators profile
+      operationId: profile.get_profile
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile.get_user_profileResponse'
+      deprecated: false
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+  '/v1/profiles/{userID}/avatar/info':
+    get:
+      tags:
+        - profile
+      summary: "Get a user's avatar's info"
+      description: This is used to check if an avatar is a video or image. The `key` param is used to beat caching while giving us caching for this specific key.
+      operationId: profile.get_user_avatar_info
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile.get_user_avatar_infoResponse'
+      deprecated: false
+  '/v1/profiles/avatar/{key}':
+    get:
+      tags:
+        - profile
+      summary: profile.get_user_avatar_with_key.get
+      description: 'Returns an image suitable for your device (WebP for those who support it, PNG for those who cant)'
+      operationId: profile.get_user_avatar_with_key.get
+      parameters:
+        - name: key
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                description: OK
+                nullable: true
+      deprecated: false
+    parameters:
+      - schema:
+          type: string
+        name: key
+        in: path
+        required: true
+  '/v1/profiles/{userID}/avatar/{key}':
+    get:
+      tags:
+        - profile
+      summary: "Get a creator's avatar"
+      description: 'Returns an image suitable for your device (WebP for those who support it, PNG for those who cant)'
+      operationId: profile.avatar
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: key
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                description: OK
+                format: binary
+      deprecated: false
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: key
+        in: path
+        required: true
+  '/v1/profiles/{userID}/background':
+    get:
+      tags:
+        - profile
+      summary: "Get a creator's background"
+      description: 'Returns an image suitable for your device (WebP for those who support it, PNG for those who cant)'
+      operationId: profile.background
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns an image object
+          headers: {}
+      deprecated: false
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+  /v1/profiles/@me/avatar/upload:
+    post:
+      tags:
+        - profile
+      summary: "Update a creator's avatar"
+      description: Requires profile.manage_images.write
+      operationId: profile.upload_user_avatar
+      parameters: []
+      requestBody:
+        content:
+          multipart/form-data:
+            encoding: {}
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  description: The new avatar in file form
+                  format: binary
+        required: false
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+  /v1/profiles/@me/background/upload:
+    post:
+      tags:
+        - profile
+      summary: "Update a creator's background"
+      description: Requires profile.manage_images.write
+      operationId: profile.upload_user_background
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            encoding: {}
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+        required: false
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '400':
+          description: The was an error while uploading
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+  /v1/oauth/@me/profile:
+    get:
+      tags:
+        - oauth
+      summary: "Get the logged in user's profile"
+      operationId: oauth.oauth_get_profile
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  profile:
+                    $ref: '#/components/schemas/Profile'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+  /v1/posts/@me:
+    post:
+      tags:
+        - posts
+      summary: Create a post
+      operationId: posts.create_a_post
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  postID:
+                    type: string
+                  post_slug:
+                    type: string
+                  post_url:
+                    type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: 'Must be either text, video, audio, or image'
+                title:
+                  type: string
+                price_to_view:
+                  type: string
+                content:
+                  type: string
+                  maxLength: 100000
+                showing:
+                  type: string
+                publish_at:
+                  type: string
+                  description: 'If included, must be a UTC ISO formatted datetime string. For example: 2020-01-21T00:00:00.000Z'
+                  format: date-time
+                image:
+                  type: object
+                  properties:
+                    src:
+                      type: array
+                      items:
+                        type: string
+                video:
+                  type: object
+                  properties:
+                    src:
+                      type: string
+                audio:
+                  type: object
+                  properties:
+                    src:
+                      type: string
+                    cover_image:
+                      type: string
+                    background_image:
+                      type: string
+                    include_in_rss:
+                      type: string
+                    title:
+                      type: string
+                nsfw:
+                  type: string
+                is_hidden:
+                  type: string
+                tags:
+                  type: string
+                attachments:
+                  type: string
+                  maxLength: 20
+                destination:
+                  type: string
+                  description: The user ID of where you want to send this post. Defaults to your account.
+              required:
+                - title
+                - price_to_view
+                - content
+        description: 'If you set the type to something other than text, then the corresponding object must be included! If type is audio, for example, then the audio object **must** be present.'
+      security:
+        - ApiKeyAuth: []
+      description: Creates a new post
+  '/v1/posts/{userID}':
+    get:
+      tags:
+        - posts
+      summary: "Get a creator's posts"
+      operationId: posts.get_posts
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  posts:
+                    type: array
+                    items:
+                      anyOf:
+                        - $ref: '#/components/schemas/LockedPost'
+                        - $ref: '#/components/schemas/Post'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: 'Gets a creators **public** posts.'
+  '/v1/posts/{userID}/post/{postID}':
+    get:
+      tags:
+        - posts
+      summary: Get a single post from a creator
+      operationId: posts.get_post.get
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  post:
+                    oneOf:
+                      - $ref: '#/components/schemas/Post'
+                      - $ref: '#/components/schemas/LockedPost'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      description: ''
+    delete:
+      tags:
+        - posts
+      summary: Delete a post
+      operationId: posts.get_post.delete
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      description: Requires posts.manage_posts.write
+      security:
+        - ApiKeyAuth: []
+    post:
+      tags:
+        - posts
+      summary: Update a post
+      operationId: posts.get_post.post
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      description: Requires posts.manage_posts.write
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                  maxLength: 100000
+                price_to_view:
+                  type: string
+                audio:
+                  type: object
+                  properties:
+                    src:
+                      type: string
+                    cover_image:
+                      type: string
+                    background_image:
+                      type: string
+                    include_in_rss:
+                      type: string
+                    title:
+                      type: string
+                video:
+                  type: object
+                  properties:
+                    src:
+                      type: string
+                destination:
+                  type: string
+                  description: The user ID of where you want to send this post. Defaults to your account.
+                attachments:
+                  type: string
+                  maxLength: 20
+                tags:
+                  type: string
+                is_hidden:
+                  type: string
+                nsfw:
+                  type: string
+                image:
+                  type: object
+                  properties:
+                    src:
+                      type: array
+                      items:
+                        type: string
+                publish_at:
+                  type: string
+                  description: 'If included, must be a UTC ISO formatted datetime string. For example: 2020-01-21T00:00:00.000Z'
+                  format: date-time
+                showing:
+                  type: string
+                type:
+                  type: string
+                  description: 'Must be either text, video, audio, or image'
+              required:
+                - title
+                - content
+                - price_to_view
+                - type
+        description: 'If you set the type to something other than text, then the corresponding object must be included! If type is audio, for example, then the audio object **must** be present.'
+      security:
+        - ApiKeyAuth: []
+  '/v1/posts/{userID}/post/{postID}/publish':
+    post:
+      tags:
+        - posts
+      summary: Publish a post
+      operationId: posts.publish_post
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '404':
+          description: The requested post does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: 'Publishes a previously hidden post for viewing by either sponsors or the public. This will trigger all after-publish hooks such as notifications. **This can only be done once per post and is not reversable.**'
+  '/v1/posts/@me/post/{postID}/secret_keys':
+    get:
+      tags:
+        - posts
+      summary: "List a post's secret keys"
+      operationId: posts.list_secret_keys
+      parameters:
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  keys:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SecretKey'
+      deprecated: false
+      description: Requires posts.secret_keys.read
+      security:
+        - ApiKeyAuth: []
+    post:
+      tags:
+        - posts
+      summary: Create a new secret key
+      operationId: posts.create_secret_key
+      parameters:
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the newly created key
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  key:
+                    $ref: '#/components/schemas/SecretKey'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      description: Requires posts.secret_keys.write
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                uses:
+                  type: number
+                expires_at:
+                  type: string
+                  format: date-time
+              required:
+                - name
+                - uses
+                - expires_at
+          application/xml:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                uses:
+                  type: string
+                expires_at:
+                  type: string
+        description: ''
+      security:
+        - ApiKeyAuth: []
+  '/v1/posts/@me/post/{postID}/secret_keys/{keyID}':
+    delete:
+      tags:
+        - posts
+      summary: Delete a secret key
+      operationId: posts.delete_secret_key
+      parameters:
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: keyID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The key is deleted
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: Delete a secret key
+  /v1/files/@me:
+    get:
+      tags:
+        - files
+      summary: List all files
+      operationId: files.list_files
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  files:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/File'
+                  total:
+                    type: number
+                  total_human:
+                    type: string
+              examples:
+                Example: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: Requires files.manage_files.read
+    post:
+      tags:
+        - files
+      summary: Upload a new file
+      operationId: files.upload_file
+      parameters: []
+      responses:
+        '201':
+          description: Returns the newly uploaded file in url form.
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  file:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '507':
+          description: Not enough space on your CDN to upload a new file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      description: Requires files.manage_files.write
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              format: binary
+              properties:
+                file:
+                  type: string
+                  format: binary
+        description: 'Set the file param to the file you want to upload. Must be a binary file, not base64 encoded!!'
+  '/v1/files/@me/{fileID}':
+    delete:
+      tags:
+        - files
+      summary: Delete a file
+      operationId: files.delete_file
+      parameters:
+        - name: fileID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted the file
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '404':
+          description: The requested file does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      description: Requires files.manage_files.write
+      security:
+        - ApiKeyAuth: []
+  /v1/search/@me/sponsors:
+    get:
+      summary: List sponsors
+      operationId: payments.list_sponsors
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        _id:
+                          type: string
+                        cards:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/ProfileCard'
+                        nickname:
+                          type: string
+                        status:
+                          type: string
+                        theme:
+                          type: string
+                        about:
+                          type: string
+                        description:
+                          type: string
+                        created_at:
+                          type: string
+                        tier:
+                          $ref: '#/components/schemas/Tier'
+                        total:
+                          type: number
+                          description: Total this user has sponsored THIS MONTH.
+                        lifetime:
+                          type: number
+                          description: Collective total of all sponsorships this user has paid towards you.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: tier
+          description: The tierID that you wish to filter results from. If present and `tier_only` is not/is false then the price of the tier will be used as a filter instead.
+        - schema:
+            type: string
+          in: query
+          name: username
+          description: The username you wish to filter for
+        - schema:
+            type: string
+          in: query
+          name: paid_only
+          description: Only returns results for users who have paid in the last month
+        - schema:
+            type: string
+          in: query
+          name: tier_only
+          description: Only returns results for users who are sponsoring a tier
+      description: List all of your sponsors as well as filter them.
+  /v1/search:
+    get:
+      tags:
+        - search
+      summary: Search users
+      operationId: search.search_users
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Profile'
+        '400':
+          description: 'You need to give a query to search with! (try ?q=Ceru to search for the founder of Sponsus!)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      description: ''
+  /v1/feed/@me:
+    get:
+      tags:
+        - feed
+      summary: List all posts from your sponsorships
+      operationId: feed.get_feed
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  posts:
+                    type: array
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/Post'
+                        - $ref: '#/components/schemas/LockedPost'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+  /v1/feed/@me/total:
+    get:
+      tags:
+        - feed
+      summary: Get feed post count
+      operationId: feed.get_total_post_count
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  s:
+                    type: boolean
+                    description: Was the request successful or not
+                  t:
+                    type: number
+                    description: Number of posts in your feed
+      deprecated: false
+      description: Used to check if the UI should update
+      security:
+        - ApiKeyAuth: []
+  /v1/chat/@me/new_conversation:
+    post:
+      tags:
+        - chat
+      summary: Create a new conversation
+      operationId: chat.create_conversation
+      parameters: []
+      responses:
+        '200':
+          description: Returns the newly created conversation
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  conversation:
+                    $ref: '#/components/schemas/Conversation'
+        '403':
+          description: You or one of your target users has blocked you or you have blocked them
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: 'One of the users in the array does not exist, please make sure that they do exist before requesting a conversation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  description: 'An array of a single userID you wish to add. In future, we may allow bigger groups.'
+                  items:
+                    type: number
+      security:
+        - ApiKeyAuth: []
+  /v1/chat/@me/conversations:
+    get:
+      tags:
+        - chat
+      summary: List active conversations
+      operationId: chat.get_conversations
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  conversations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Conversation'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+  '/v1/chat/{convoID}/rtm/start':
+    get:
+      tags:
+        - chat
+      summary: Create RTM url
+      operationId: chat.create_conversation_rtm_url
+      parameters:
+        - name: convoID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The base URL for the RTM session is given below. This can be used to watch for new messages by going to <base_url>/messages. This url only supports WSS connections!'
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  rtm:
+                    type: object
+                    properties:
+                      base_url:
+                        type: string
+      deprecated: false
+      description: |-
+        Requires chat.live_messages.read
+
+        An RTM url allows you to listen in on any conversation that you have access to. Just request it, and connect to the provided url via a WebSocket within 1 minute.
+      security:
+        - ApiKeyAuth: []
+  /v1/chat/@me/rtm/unread/start:
+    get:
+      tags:
+        - chat
+      summary: Create unread notifications RTM URL
+      operationId: chat.create_message_notifications_url
+      parameters: []
+      responses:
+        '200':
+          description: Returns a valid WebSocket URL for listening to unread message events.
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  rtm:
+                    type: object
+                    properties:
+                      base_url:
+                        type: string
+      deprecated: false
+      description: |-
+        Requires chat.manage_messages.read
+
+        Creates a unread message notification RTM link which allows you to listen for new messages for all conversations, including ones that get made after the url's creation.
+
+        Unlike the conversation RTM link, this one is just a simple "plug the url into a websocket and go" type deal.
+      security:
+        - ApiKeyAuth: []
+  '/v1/chat/{convoID}/messages':
+    get:
+      tags:
+        - chat
+      summary: "List a conversation's messages"
+      operationId: chat.manage_messages.get
+      parameters:
+        - name: convoID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - schema:
+            type: number
+          in: query
+          name: page
+          description: The page you want to pull from
+      responses:
+        '200':
+          description: Returns the conversations messages sorted by creation. Use the page param to go back in history
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChatMessage'
+                  has_more:
+                    type: boolean
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+    post:
+      tags:
+        - chat
+      summary: Create a new message
+      operationId: chat.create_message
+      parameters:
+        - name: convoID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the new message
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    $ref: '#/components/schemas/ChatMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '403':
+          description: You do not have access rights to this conversation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Conversation ID wasnt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      description: |-
+        Requires chat.manage_messages.write
+
+        Creates a new message in the target conversation.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  minLength: 2
+                  maxLength: 1500
+                attachments:
+                  type: array
+                  maxItems: 5
+                  items:
+                    $ref: '#/components/schemas/Attachment'
+        description: ''
+  '/v1/chat/{convoID}/members/{userID}':
+    delete:
+      tags:
+        - chat
+      summary: Remove a user from the conversation
+      operationId: chat.remove_user
+      parameters:
+        - name: convoID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      deprecated: false
+      description: '**This will not work as there is a max limit of users in a convo set to 2. If you want to close a DM for good then you must block the other user.**'
+      responses:
+        '501':
+          description: Not Implemented
+      security:
+        - ApiKeyAuth: []
+  '/v1/chat/{convoID}/messages/{messageID}':
+    delete:
+      tags:
+        - chat
+      summary: Delete a message
+      operationId: chat.delete_message
+      parameters:
+        - name: convoID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: messageID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted the message
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      description: Requires chat.manage_messages.write
+      security:
+        - ApiKeyAuth: []
+    post:
+      tags:
+        - chat
+      summary: Edit a message
+      operationId: chat.edit_message
+      parameters:
+        - name: convoID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: messageID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated the message
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '400':
+          description: 'There was an error while validating your input, please make sure that it is valid!'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '403':
+          description: You dont have access rights to this message/convo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: Requires chat.manage_messages.write
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                attachments:
+                  $ref: '#/components/schemas/Attachment'
+        description: 'Only provide the fields you wish to update. You must, however, provide at least 1 field or it wont accept your request.'
+  '/v1/chat/{convoID}/ack':
+    post:
+      tags:
+        - chat
+      summary: Mark messages as reasd
+      operationId: chat.manage_messages.post1
+      parameters:
+        - name: convoID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '401':
+          description: Unauthorized
+        '404':
+          description: One of the message IDs doesnt exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                  code:
+                    type: string
+                  index:
+                    type: number
+                    description: Index of the message ID that doesnt exist
+      deprecated: false
+      description: Marks the messages as being read.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messages:
+                  type: array
+                  description: An array of messageIDs
+                  items:
+                    type: string
+  /v1/chat/@me/unread:
+    get:
+      tags:
+        - chat
+      summary: Get all conversations unread count
+      operationId: chat.get_unread
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  unread:
+                    type: object
+                    description: 'OpenAPI doesnt allow for objects with dynamic keys. The keys in the object are "convoID:Unread count"'
+      deprecated: false
+      description: Get unread count from all conversations
+      security:
+        - ApiKeyAuth: []
+  /v1/chat/@me/block_list:
+    get:
+      tags:
+        - chat
+      summary: Get block list
+      operationId: chat.block_list
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  block_list:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        userID:
+                          type: string
+                        targetID:
+                          type: string
+                        created_at:
+                          type: string
+                        reason:
+                          type: string
+                        target:
+                          $ref: '#/components/schemas/Profile'
+              examples:
+                Example:
+                  value:
+                    success: true
+                    block_list:
+                      - _id: '1830113509669736448'
+                        userID: '1729788214794915840'
+                        targetID: '1818881790329360384'
+                        created_at: 1579307276
+                        reason: Was mean
+                        target:
+                          description: ''
+                          about: 'Whoa! A profile'
+                          tags: []
+                          is_nsfw: false
+                          status: public
+                          theme: '#0a62ac'
+                          cards: []
+                          nickname: null
+                          username: 'Username!'
+                          _id: '1818881790329360384'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: Requires chat.manage_blocklist.read
+    post:
+      tags:
+        - chat
+      summary: Block a user
+      operationId: chat.block_user
+      parameters: []
+      responses:
+        '200':
+          description: Blocked the users mentioned in the array
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '400':
+          description: "Y'all didnt read the request body did you"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: Requires chat.manage_blocklist.write
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  description: |
+                    Array of userIDs to block
+                  items: {}
+                reason:
+                  type: string
+              required:
+                - users
+                - reason
+  '/v1/chat/@me/block_list/{targetID}':
+    delete:
+      tags:
+        - chat
+      summary: Unblock a user
+      operationId: chat.unblock_user
+      parameters:
+        - name: targetID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Unblocked the user
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '400':
+          description: The user wasnt blocked before
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+  /v1/permissions/@me/teams:
+    get:
+      summary: Get my teams
+      operationId: teams.list_teams
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  teams:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TeamMember'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: Requires teams.teams.read
+      tags:
+        - teams
+  '/v1/permissions/{creatorID}/team/{userID}':
+    delete:
+      summary: Leave a team/Remove a user from a team
+      operationId: teams.remove_member
+      parameters:
+        - name: creatorID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '403':
+          description: You do not have rights to edit this team
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: Requires teams.teams.write
+      tags:
+        - teams
+    post:
+      summary: Edit a team member
+      operationId: teams.edit_member
+      parameters:
+        - name: creatorID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '400':
+          description: The user is not apart of the team.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '404':
+          description: The roleID you provided doesnt exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      description: |-
+        Requires teams.teams.write
+
+        Update a members roles
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roleID:
+                  type: string
+                  description: The roleID you want to set their permissions to
+      tags:
+        - teams
+  '/v1/permissions/{creatorID}/team/accept_invite':
+    get:
+      summary: Accept a team invite
+      operationId: team.accept_invite
+      parameters:
+        - name: creatorID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '400':
+          description: You have already accepted the invite
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '403':
+          description: You are not invited to this team
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      tags:
+        - teams
+      security:
+        - ApiKeyAuth: []
+      description: Requires teams.teams.write
+  '/v1/permissions/@me/team/{userID}/invite':
+    post:
+      summary: Invite a user to your team
+      operationId: teams.invite
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Invited the user to your team, please wait for them to accept the invite!'
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '400':
+          description: User has already been invited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '404':
+          description: The user was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      tags:
+        - teams
+      security:
+        - ApiKeyAuth: []
+      description: Requires teams.teams.write
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+        description: Body will be ignored
+  /v1/permissions/@me/team/search:
+    get:
+      summary: Search for new team members
+      operationId: teams.search
+      parameters:
+        - schema:
+            type: string
+            minLength: 2
+            maxLength: 100
+          in: query
+          name: q
+          description: The username to search for
+          required: true
+      responses:
+        '200':
+          description: Returns users that can be invited or have been invited already. Check the status field before attempting to invite
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          description: the users ID
+                        username:
+                          type: string
+                          description: The username
+                        status:
+                          type: string
+                          description: 'The status of the user, if they have been invited this will be set to "Pending" otherwise it is "Avalible"'
+        '400':
+          description: 'Something is wrong with the query param. You either didnt set it, or set it too long.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      tags:
+        - teams
+      security:
+        - ApiKeyAuth: []
+      description: Requires teams.teams.read
+  /v1/permissions/@me/team:
+    get:
+      tags:
+        - perm
+      summary: Get my team
+      operationId: teams.team
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  members:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TeamMember'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      description: Requires teams.teams.read
+      security:
+        - ApiKeyAuth: []
+  '/v1/permissions/@me/roles/{roleID}':
+    delete:
+      summary: Delete a role
+      operationId: teams.delete_role
+      parameters:
+        - name: roleID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted the role
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '403':
+          description: You dont have rights to edit this role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Role not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - teams
+    post:
+      summary: Update a team role
+      operationId: teams.edit_role
+      parameters:
+        - name: roleID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated this role
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '400':
+          description: Input validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '403':
+          description: You dont have rights to edit this role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: Requires teams.roles.write
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                permissions:
+                  type: array
+                  items:
+                    type: string
+                color:
+                  type: string
+                title:
+                  type: string
+                description:
+                  type: string
+      tags:
+        - teams
+  /v1/permissions/@me/roles:
+    get:
+      summary: "List my team's roles"
+      operationId: teams.list_roles
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  roles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TeamRole'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: Requires teams.roles.read
+      tags:
+        - teams
+    post:
+      tags:
+        - perm
+      summary: perm.manage_creator_roles.post
+      operationId: perm.manage_creator_roles.post
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+      deprecated: false
+  '/v1/comments/{postID}/comment/{commentID}/replies':
+    get:
+      tags:
+        - comments
+      summary: "Get a comment's replies"
+      operationId: comments.get_replies
+      parameters:
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: commentID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  comments:
+                    $ref: '#/components/schemas/Comment'
+      deprecated: false
+    post:
+      tags:
+        - comments
+      summary: Reply to a comment
+      operationId: comments.create_reply
+      parameters:
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: commentID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Created the reply
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      description: Requires comments.manage_comments.write
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+  '/v1/comments/{postID}/comment/{commentID}/replies/stats':
+    get:
+      tags:
+        - comments
+      summary: "Get a comment's replies statistics"
+      operationId: comments.get_comment_reply_stats
+      parameters:
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: commentID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  total:
+                    type: number
+                    description: Total replies to this comment
+        '404':
+          description: The post was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+  '/v1/comments/{postID}':
+    get:
+      tags:
+        - comments
+      summary: "List a post's comments"
+      operationId: posts.list_comments
+      parameters:
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  comments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Comment'
+        '404':
+          description: Post was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: Requires comments.manage_comments.read
+    post:
+      tags:
+        - comments
+      summary: Create a comment
+      operationId: posts.create_comment
+      parameters:
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+      description: Requires comments.manage_comments.write
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  minLength: 5
+                  maxLength: 500
+  /v1/payments/@me/statistics:
+    get:
+      tags:
+        - payments
+      summary: Get my monthly stats
+      description: |-
+        Requires payments.stats.read
+        Get the monthly stats for the user.
+      operationId: payments.payment_stats
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payments.payment_statsResponse'
+              example:
+                success: true
+                total: 5
+                sponsorships: 1
+                due: 1
+                sponsoring: 1
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+              examples: {}
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+  '/v1/payments/{userID}/tiers':
+    get:
+      tags:
+        - payments
+      summary: Get a creators tiers
+      description: 'Gets the creators tiers for display on the front end. If you want to edit tiers, use /payments/@me/tiers.'
+      operationId: payments.get_user_tiers
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payments.get_user_tiersResponse'
+              example:
+                success: true
+                tiers:
+                  - _id: 1732814647763013600
+                    title: 'Sponsor Sponsus!'
+                    price: 5
+                    description: |-
+                      Testing tier for content and such
+
+                      **Rewards**
+                      * Cool role on our **Discord**
+                      * Hugs from me <3
+                    userID: 1729788214794915800
+                    advanced:
+                      limit:
+                        enabled: true
+                        max: 6
+                      discord_role:
+                        name: Writing Team
+                        id: 622152828831662100
+                    created_at: 1556109440
+      deprecated: false
+  '/v1/payments/{userID}/tiers/{tierID}':
+    get:
+      tags:
+        - payments
+      summary: Get a single tier
+      description: Get a single tier
+      operationId: payments.get_tier.get
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: tierID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payments.get_tier.getResponse'
+        '404':
+          description: The requested tier does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+  '/v1/payments/{userID}/tiers/{tierID}/remaining_slots':
+    get:
+      tags:
+        - payments
+      summary: "Get a tier's remaining slots (if its a limited tier)"
+      description: Tells you how many slots are open for sponsorships. Used in the UI to show how many are left.
+      operationId: payments.get_tier
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: tierID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payments.get_tierResponse'
+              example:
+                success: true
+                total_left: 5
+        '400':
+          description: Tier is not limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Tier was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+  /v1/payments/@me/supporting:
+    get:
+      tags:
+        - payments
+      summary: List who I am supporting
+      description: Requires payments.sponsoring.read
+      operationId: payments.get_user_supporting
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payments.get_user_supportingResponse'
+      deprecated: false
+  '/v1/payments/{userID}/sponsoring':
+    get:
+      tags:
+        - payments
+      summary: Check if a user is sponsoring you
+      description: |-
+        Gets an IncomingSponsorship object if the target user is sponsoring you.
+
+        Requires payments.sponsorships.read
+
+        **(Sponsorships and sponsoring are two different permissions!!)**
+      operationId: payments.user_sponsoring_status
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payments.get_user_sponsoring_statusResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+  '/v1/payments/{userID}/donations/settings':
+    get:
+      tags:
+        - payments
+      summary: payments.set_donation_settings
+      description: Get a creators donation settings
+      operationId: payments.set_donation_settings
+      parameters:
+        - name: userID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payments.set_donation_settingsResponse'
+              example:
+                success: true
+                enabled: true
+                length: 1month
+                limit: Thu 13/02/2020
+                social_media_image: 'https://cdn.ceru.tech/sponsus/1729788214794915840/1736565642238234624.png'
+        '404':
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+  /v1/payments/@me/charges:
+    get:
+      tags:
+        - payments
+      summary: payments.get_charges
+      description: Requires payments.charges.read
+      operationId: payments.get_charges
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payments.get_chargesResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+      deprecated: false
+  '/v1/comments/{postID}/comment/{commentID}':
+    delete:
+      tags:
+        - comments
+      summary: Delete a comment
+      operationId: comments.manage_comment.delete
+      parameters:
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: commentID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted the comment
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '403':
+          description: You dont have rights to edit this comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      description: Requires comments.manage_comments.write
+      security:
+        - ApiKeyAuth: []
+    post:
+      tags:
+        - comments
+      summary: Edit a comment
+      operationId: comments.manage_comment.post
+      parameters:
+        - name: postID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: commentID
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated the comment
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIBasicSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKeyNoPermissions'
+        '403':
+          description: You dont have rights to edit this comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+      security:
+        - ApiKeyAuth: []
+      description: Requires comments.manage_comments.write
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+components:
+  schemas:
+    Profile:
+      title: Profile
+      type: object
+      properties:
+        _id:
+          type: string
+        about:
+          type: string
+        status:
+          type: string
+        theme:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+          description: ''
+        is_nsfw:
+          type: string
+        cards:
+          type: array
+          items:
+            type: object
+          description: ''
+        nickname:
+          type: string
+        username:
+          type: string
+      description: A profile object used to describe a creator.
+    ProfileCard:
+      title: ProfileCard
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        image:
+          type: string
+        link:
+          type: string
+    APIError:
+      title: APIError
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        code:
+          type: string
+    APIBasicSuccess:
+      title: APIBasicSuccess
+      type: object
+      properties:
+        success:
+          type: boolean
+    Tier:
+      title: Tier
+      required:
+        - _id
+        - title
+        - price
+        - description
+        - userID
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        price:
+          type: number
+        description:
+          type: string
+        userID:
+          type: string
+        advanced:
+          type: object
+        created_at:
+          type: number
+        support:
+          $ref: '#/components/schemas/Support'
+      description: A tier for a creator.
+    APIKeyNoPermissions:
+      title: APIKeyNoPermissions
+      type: object
+      properties:
+        success:
+          type: string
+        error:
+          type: string
+        code:
+          type: string
+        missing_permission:
+          type: string
+      description: This is where the API cannot fulfil the request due to the API key not having the correct permissions.
+    Sponsorship:
+      title: Sponsorship
+      type: object
+      properties:
+        tier:
+          $ref: '#/components/schemas/Tier'
+        price:
+          type: number
+        owner:
+          $ref: '#/components/schemas/Profile'
+        is_active:
+          type: boolean
+        is_custom:
+          type: boolean
+        charge_amount:
+          type: number
+    IncomingSponsorship:
+      title: IncomingSponsorship
+      required:
+        - userID
+        - created_at
+        - is_active
+        - targetID
+        - has_paid
+        - current_month
+      type: object
+      properties:
+        userID:
+          type: string
+        created_at:
+          type: number
+        is_active:
+          type: boolean
+        targetID:
+          type: string
+        tier:
+          $ref: '#/components/schemas/Tier'
+        has_paid:
+          type: boolean
+        current_month:
+          type: string
+        is_custom:
+          type: boolean
+        active_total:
+          type: number
+        active_sponsorship_total:
+          type: number
+      description: Slightly different to the standard sponsorship object. Needs more information and doesnt need to provide creator context (since the person calling the route is the creator)
+    Charge:
+      title: Charge
+      required:
+        - _id
+        - amount
+        - created_at
+        - avalible_at
+      type: object
+      properties:
+        _id:
+          type: string
+        amount:
+          type: string
+        destination:
+          $ref: '#/components/schemas/BasicUser'
+        created_at:
+          type: string
+        avalible_at:
+          type: string
+        user:
+          $ref: '#/components/schemas/BasicUser'
+        type:
+          type: string
+        avalible_percent:
+          type: string
+        created_at_stamp:
+          type: string
+    BasicUser:
+      title: BasicUser
+      type: object
+      properties:
+        _id:
+          type: string
+        username:
+          type: string
+      description: This is a shortform User object
+    payments.get_chargesResponse:
+      title: payments.get_chargesResponse
+      type: object
+      properties:
+        success:
+          type: string
+        charges:
+          type: array
+          items:
+            $ref: '#/components/schemas/Charge'
+          description: ''
+    payments.get_tier.getResponse:
+      title: payments.get_tier.getResponse
+      type: object
+      properties:
+        success:
+          type: string
+        tier:
+          $ref: '#/components/schemas/Tier'
+    payments.get_tierResponse:
+      title: payments.get_tierResponse
+      type: object
+      properties:
+        success:
+          type: boolean
+        total_left:
+          type: number
+          description: How many sponsorship slots are left before no more can be added.
+    payments.get_user_sponsoring_statusResponse:
+      title: payments.get_user_sponsoring_statusResponse
+      type: object
+      properties:
+        success:
+          type: boolean
+        sponsorship:
+          $ref: '#/components/schemas/IncomingSponsorship'
+    payments.get_user_supportingResponse:
+      title: payments.get_user_supportingResponse
+      type: object
+      properties:
+        success:
+          type: string
+        supporting:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sponsorship'
+          description: ''
+    payments.get_user_tiersResponse:
+      title: payments.get_user_tiersResponse
+      type: object
+      properties:
+        success:
+          type: string
+        tiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tier'
+          description: ''
+    payments.manage_tiers.getResponse:
+      title: payments.manage_tiers.getResponse
+      type: object
+      properties:
+        success:
+          type: boolean
+        tiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tier'
+          description: ''
+    payments.manage_tiers.postResponse:
+      title: payments.manage_tiers.postResponse
+      type: object
+      properties:
+        success:
+          type: boolean
+        tier:
+          $ref: '#/components/schemas/Tier'
+    payments.payment_statsResponse:
+      title: payments.payment_statsResponse
+      type: object
+      properties:
+        success:
+          type: string
+          description: 'Beep!'
+        total:
+          type: number
+          description: Amount given to this user per month from sponsors
+        due:
+          type: number
+          description: How much this user must pay each month
+        sponsorships:
+          type: number
+          description: How many creators this user is sponsoring
+        sponsors:
+          type: number
+          description: How many people are sponsoring this creator
+    payments.set_donation_settingsResponse:
+      title: payments.set_donation_settingsResponse
+      type: object
+      properties:
+        success:
+          type: boolean
+        enabled:
+          type: boolean
+        length:
+          type: string
+        limit:
+          type: string
+        social_media_image:
+          type: string
+    profile.calc_per_month.getResponse:
+      title: profile.calc_per_month.getResponse
+      required:
+        - success
+      type: object
+      properties:
+        success:
+          type: string
+        sponsors:
+          type: number
+          description: How many sponsorships does this creator have
+        total:
+          type: number
+          description: 'How much, in $, does this creator get'
+    profile.get_post_tagsResponse:
+      title: profile.get_post_tagsResponse
+      type: object
+      properties:
+        success:
+          type: string
+        tags:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+    profile.get_post_totalResponse:
+      title: profile.get_post_totalResponse
+      type: object
+      properties:
+        success:
+          type: string
+        total:
+          type: number
+    profile.get_set_user_profile.getResponse:
+      title: profile.get_set_user_profile.getResponse
+      type: object
+      properties:
+        success:
+          type: string
+        profile:
+          $ref: '#/components/schemas/Profile'
+    profile.get_user_avatar_infoResponse:
+      title: profile.get_user_avatar_infoResponse
+      type: object
+      properties:
+        success:
+          type: boolean
+        is_image:
+          type: string
+        key:
+          type: string
+    profile.get_user_profileResponse:
+      title: profile.get_user_profileResponse
+      type: object
+      properties:
+        success:
+          type: string
+        profile:
+          $ref: '#/components/schemas/Profile'
+    Support:
+      title: Support
+      type: object
+      properties:
+        is_supporting:
+          type: boolean
+    updates:
+      title: updates
+      type: object
+      properties:
+        username:
+          type: string
+        view_nsfw:
+          type: boolean
+    Post:
+      title: Post
+      type: object
+      description: 'Fields with _str are from an old converter that ensures that the front end can read these fields. Please ignore them and use the normal fields! <3'
+      properties:
+        _id:
+          type: string
+        _id_str:
+          type: string
+        title_slug:
+          type: string
+        type:
+          type: string
+        title:
+          type: string
+        price_to_view:
+          type: number
+        authorID_str:
+          type: string
+        authorID:
+          type: string
+        userID_str:
+          type: string
+        userID:
+          type: string
+        created_at:
+          type: number
+        published_at:
+          type: number
+        is_nsfw:
+          type: boolean
+        is_hidden:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        comment_count:
+          type: number
+        can_edit:
+          type: boolean
+        content:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+        audio:
+          type: object
+          properties:
+            src:
+              type: string
+            cover_image:
+              type: string
+            background_image:
+              type: string
+            include_in_rss:
+              type: string
+            title:
+              type: string
+        video:
+          type: string
+    LockedPost:
+      type: object
+      title: LockedPost
+      properties:
+        _id:
+          type: string
+        _id_str:
+          type: string
+        title_slug:
+          type: string
+        type:
+          type: string
+        title:
+          type: string
+        price_to_view:
+          type: number
+        authorID_str:
+          type: string
+        authorID:
+          type: string
+        userID_str:
+          type: string
+        userID:
+          type: string
+        created_at:
+          type: number
+        published_at:
+          type: number
+        is_nsfw:
+          type: boolean
+        is_hidden:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        comment_count:
+          type: number
+        can_edit:
+          type: boolean
+        locked:
+          type: number
+        payment_error:
+          type: string
+    SecretKey:
+      title: SecretKey
+      type: object
+      description: A secret key used to view posts
+      properties:
+        _id:
+          type: string
+        authorID:
+          type: string
+        name:
+          type: string
+        postID:
+          type: string
+        code:
+          type: string
+        uses:
+          type: number
+        expires_at:
+          type: number
+        created_at:
+          type: number
+        views:
+          type: number
+    File:
+      title: File
+      type: object
+      properties:
+        _id:
+          type: string
+        userID:
+          type: string
+        key:
+          type: string
+        hash:
+          type: string
+        filename:
+          type: string
+        filesize:
+          type: number
+        filesize_human:
+          type: string
+        created_at:
+          type: string
+    Conversation:
+      title: Conversation
+      type: object
+      properties:
+        _id:
+          type: string
+        users:
+          type: string
+        created_at:
+          type: string
+        userID:
+          type: array
+          description: Array of userIDs in the conversation
+          items:
+            type: number
+        is_direct_message:
+          type: boolean
+        title:
+          type: string
+        image:
+          type: string
+        is_active:
+          type: boolean
+      description: A conversation object for use in the chat system
+    Attachment:
+      title: Attachment
+      type: object
+      properties:
+        url:
+          type: string
+        filename:
+          type: string
+    ChatMessage:
+      title: ChatMessage
+      type: object
+      properties:
+        _id:
+          type: string
+        convoID:
+          type: string
+        userID:
+          type: string
+        content:
+          type: string
+        created_at:
+          type: number
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        is_active:
+          type: boolean
+        is_unread:
+          type: boolean
+      description: ''
+    TeamMember:
+      title: TeamMember
+      type: object
+      properties:
+        _id:
+          type: string
+        userID:
+          type: string
+        creatorID:
+          type: string
+        roleID:
+          type: string
+        created_at:
+          type: string
+        status:
+          type: string
+        role:
+          $ref: '#/components/schemas/TeamRole'
+        creator:
+          $ref: '#/components/schemas/BasicUser'
+    TeamRole:
+      title: TeamRole
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        permissions:
+          type: array
+          description: |
+            An array of active permissions
+          items:
+            type: string
+        url_overrides:
+          type: string
+        color:
+          type: string
+        userID:
+          type: string
+        created_at:
+          type: string
+        position:
+          type: string
+    Comment:
+      title: Comment
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The id of the comment
+        message:
+          type: string
+        userID:
+          type: string
+        postID:
+          type: string
+        created_at:
+          type: number
+        is_reply:
+          type: boolean
+        user:
+          $ref: '#/components/schemas/BasicUser'
+        can_manage:
+          type: boolean
+        can_edit:
+          type: boolean
+        is_creator:
+          type: boolean
+        is_staff:
+          type: boolean
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: |-
+        This is the header that allows you to login as a user. Please only use API keys for this. Your account will be disabled if you use your login token for API access.
+
+        If there is something you want access but its not avalible via API keys, please contact us at developers@sponsus.org
+      name: Authorization
+      in: header
+tags:
+  - name: profile
+  - name: posts
+  - name: payments
+  - name: oauth
+  - name: files
+  - name: events
+  - name: search
+  - name: integrations
+  - name: feed
+  - name: chat
+  - name: comments
+  - name: notifications
+    description: ''
