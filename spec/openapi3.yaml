@@ -823,9 +823,11 @@ paths:
                   posts:
                     type: array
                     items:
-                      anyOf:
-                        - $ref: '#/components/schemas/LockedPost'
+                      oneOf:
                         - $ref: '#/components/schemas/Post'
+                        - $ref: '#/components/schemas/LockedPost'
+                      discriminator:
+                        propertyName: locked
         '404':
           description: Not Found
           content:
