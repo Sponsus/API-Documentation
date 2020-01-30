@@ -134,7 +134,7 @@ Parameter | Description
 ***Required*** <br /> response_type | OAuth grant type. Set this to code.
 ***Required*** <br /> client_id | Your client ID
 ***Required*** <br /> redirect_uri | One of your redirect_uris that you provided in step 1
-***Required (at least one)*** <br /> scope | This parameter will allow your app to read/write to the given scope. For a list of valid scopes, [click here!](#scopes). It will be displayed to the user in human-friendly terms when signing in with Patreon
+***Required (at least one)*** <br /> scope | This parameter will allow your app to read/write to the given scope. For a list of valid scopes, [click here!](#scopes). It will be displayed to the user in human-friendly terms when signing in.
 state | This will be added to the redirect URI when the user has authorized or denied the OAuth flow.
 
 ### An example of the page you should get:
@@ -434,133 +434,9 @@ Replace \<userID> with the ID of the user you wish to grab the information for.
 
 # 🔧 API Reference
  
-Everything past this point is the API reference. You can find the OpenAPI 3 spec that this was generated from [here](https://github.com/Sponsus/API-Documentation/spec/openapi3.yaml)
+Everything past this point is the API reference. You can find the OpenAPI 3 spec that this was generated from [here](https://github.com/Sponsus/API-Documentation/blob/master/spec/openapi3.yaml)
 
-**Thank you for using Sponsus!**<h1 id="sponsus-api-default">Default</h1>
-
-## List sponsors
-
-<a id="opIdpayments.list_sponsors"></a>
-
-> Code samples
-
-```python
-import requests
-headers = {
-  'Accept': 'application/json',
-  'Authorization': 'API_KEY'
-}
-
-r = requests.get('https://api-dev.sponsus.org/v1/search/@me/sponsors', headers = headers)
-
-print(r.json())
-
-```
-
-`GET /v1/search/@me/sponsors`
-
-List all of your sponsors as well as filter them.
-
-<h3 id="list-sponsors-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|tier|query|string|false|The tierID that you wish to filter results from. If present and `tier_only` is not/is false then the price of the tier will be used as a filter instead.|
-|username|query|string|false|The username you wish to filter for|
-|paid_only|query|string|false|Only returns results for users who have paid in the last month|
-|tier_only|query|string|false|Only returns results for users who are sponsoring a tier|
-
-> Example responses
-
-> 200 Response
-
-```json
-{
-  "success": true,
-  "results": [
-    {
-      "username": "string",
-      "_id": "string",
-      "cards": [
-        {
-          "title": "string",
-          "content": "string",
-          "image": "string",
-          "link": "string"
-        }
-      ],
-      "nickname": "string",
-      "status": "string",
-      "theme": "string",
-      "about": "string",
-      "description": "string",
-      "created_at": "string",
-      "tier": {
-        "_id": "string",
-        "title": "string",
-        "price": 0,
-        "description": "string",
-        "userID": "string",
-        "advanced": {},
-        "created_at": 0,
-        "support": {
-          "is_supporting": true
-        }
-      },
-      "total": 0,
-      "lifetime": 0
-    }
-  ]
-}
-```
-
-<h3 id="list-sponsors-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|Inline|
-
-<h3 id="list-sponsors-responseschema">Response Schema</h3>
-
-Status Code **200**
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|» success|boolean|false|none|none|
-|» results|[object]|false|none|none|
-|»» username|string|false|none|none|
-|»» _id|string|false|none|none|
-|»» cards|[[ProfileCard](#schemaprofilecard)]|false|none|none|
-|»»» ProfileCard|[ProfileCard](#schemaprofilecard)|false|none|none|
-|»»»» title|string|false|none|none|
-|»»»» content|string|false|none|none|
-|»»»» image|string|false|none|none|
-|»»»» link|string|false|none|none|
-|»» nickname|string|false|none|none|
-|»» status|string|false|none|none|
-|»» theme|string|false|none|none|
-|»» about|string|false|none|none|
-|»» description|string|false|none|none|
-|»» created_at|string|false|none|none|
-|»» tier|[Tier](#schematier)|false|none|A tier for a creator.|
-|»»» _id|string|true|none|none|
-|»»» title|string|true|none|none|
-|»»» price|number|true|none|none|
-|»»» description|string|true|none|none|
-|»»» userID|string|true|none|none|
-|»»» advanced|object|false|none|none|
-|»»» created_at|number|false|none|none|
-|»»» support|[Support](#schemasupport)|false|none|none|
-|»»»» is_supporting|boolean|false|none|none|
-|»» total|number|false|none|Total this user has sponsored THIS MONTH.|
-|»» lifetime|number|false|none|Collective total of all sponsorships this user has paid towards you.|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-ApiKeyAuth
-</aside>
-
-<h1 id="sponsus-api-profile">profile</h1>
+**Thank you for using Sponsus!**<h1 id="sponsus-api-profile">profile</h1>
 
 ## Get a creators amount per month
 
@@ -574,13 +450,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/profiles/{userID}/per_month', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/profiles/{userID}/per_month', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/profiles/{userID}/per_month`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/profiles/{userID}/per_month
+</p>
 
 Get
 
@@ -624,13 +503,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/profiles/{userID}/post_tags', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/profiles/{userID}/post_tags', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/profiles/{userID}/post_tags`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/profiles/{userID}/post_tags
+</p>
 
 Get a creators post tags
 
@@ -670,13 +552,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/profiles/{userID}/post_total', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/profiles/{userID}/post_total', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/profiles/{userID}/post_total`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/profiles/{userID}/post_total
+</p>
 
 Gets a total of all posts released by this creator (for use in the frontend)
 
@@ -719,13 +604,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/profiles/{userID}', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/profiles/{userID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/profiles/{userID}`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/profiles/{userID}
+</p>
 
 Get a creators profile
 
@@ -783,13 +671,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/profiles/@me', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/profiles/@me', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/profiles/@me`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/profiles/@me
+</p>
 
 Requires profile.profile.write
 
@@ -866,13 +757,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/profiles/{userID}/avatar/info', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/profiles/{userID}/avatar/info', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/profiles/{userID}/avatar/info`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/profiles/{userID}/avatar/info
+</p>
 
 This is used to check if an avatar is a video or image. The `key` param is used to beat caching while giving us caching for this specific key.
 
@@ -916,13 +810,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/profiles/avatar/{key}', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/profiles/avatar/{key}', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/profiles/avatar/{key}`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/profiles/avatar/{key}
+</p>
 
 Returns an image suitable for your device (WebP for those who support it, PNG for those who cant)
 
@@ -971,13 +868,16 @@ headers = {
   'Accept': 'application/octet-stream'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/profiles/{userID}/avatar/{key}', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/profiles/{userID}/avatar/{key}', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/profiles/{userID}/avatar/{key}`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/profiles/{userID}/avatar/{key}
+</p>
 
 Returns an image suitable for your device (WebP for those who support it, PNG for those who cant)
 
@@ -1011,13 +911,16 @@ This operation does not require authentication
 ```python
 import requests
 
-r = requests.get('https://api-dev.sponsus.org/v1/profiles/{userID}/background')
+r = requests.get('https://api.sponsus.org/v1/profiles/{userID}/background')
 
 print(r.json())
 
 ```
 
-`GET /v1/profiles/{userID}/background`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/profiles/{userID}/background
+</p>
 
 Returns an image suitable for your device (WebP for those who support it, PNG for those who cant)
 
@@ -1050,13 +953,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/profiles/@me/avatar/upload', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/profiles/@me/avatar/upload', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/profiles/@me/avatar/upload`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/profiles/@me/avatar/upload
+</p>
 
 Requires profile.manage_images.write
 
@@ -1108,13 +1014,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/profiles/@me/background/upload', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/profiles/@me/background/upload', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/profiles/@me/background/upload`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/profiles/@me/background/upload
+</p>
 
 Requires profile.manage_images.write
 
@@ -1171,13 +1080,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/posts/@me', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/posts/@me', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/posts/@me`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/posts/@me
+</p>
 
 Creates a new post
 
@@ -1190,7 +1102,7 @@ Creates a new post
   "price_to_view": "string",
   "content": "string",
   "showing": "string",
-  "publish_at": "2020-01-30T05:26:16Z",
+  "publish_at": "2020-01-30T10:23:26Z",
   "image": {
     "src": [
       "string"
@@ -1292,13 +1204,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/posts/{userID}', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/posts/{userID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/posts/{userID}`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/posts/{userID}
+</p>
 
 Gets a creators **public** posts.
 
@@ -1336,8 +1251,18 @@ Gets a creators **public** posts.
       ],
       "comment_count": 0,
       "can_edit": true,
-      "locked": 0,
-      "payment_error": "string"
+      "content": "string",
+      "images": [
+        "string"
+      ],
+      "audio": {
+        "src": "string",
+        "cover_image": "string",
+        "background_image": "string",
+        "include_in_rss": "string",
+        "title": "string"
+      },
+      "video": "string"
     }
   ]
 }
@@ -1357,34 +1282,9 @@ Status Code **200**
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |» success|string|false|none|none|
-|» posts|[anyOf]|false|none|none|
+|» posts|[oneOf]|false|none|none|
 
-*anyOf*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»» *anonymous*|[LockedPost](#schemalockedpost)|false|none|none|
-|»»» _id|string|false|none|none|
-|»»» _id_str|string|false|none|none|
-|»»» title_slug|string|false|none|none|
-|»»» type|string|false|none|none|
-|»»» title|string|false|none|none|
-|»»» price_to_view|number|false|none|none|
-|»»» authorID_str|string|false|none|none|
-|»»» authorID|string|false|none|none|
-|»»» userID_str|string|false|none|none|
-|»»» userID|string|false|none|none|
-|»»» created_at|number|false|none|none|
-|»»» published_at|number|false|none|none|
-|»»» is_nsfw|boolean|false|none|none|
-|»»» is_hidden|boolean|false|none|none|
-|»»» tags|[string]|false|none|none|
-|»»» comment_count|number|false|none|none|
-|»»» can_edit|boolean|false|none|none|
-|»»» locked|number|false|none|none|
-|»»» payment_error|string|false|none|none|
-
-*or*
+*oneOf*
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
@@ -1416,6 +1316,31 @@ Status Code **200**
 |»»»» title|string|false|none|none|
 |»»» video|string|false|none|none|
 
+*xor*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»» *anonymous*|[LockedPost](#schemalockedpost)|false|none|none|
+|»»» _id|string|false|none|none|
+|»»» _id_str|string|false|none|none|
+|»»» title_slug|string|false|none|none|
+|»»» type|string|false|none|none|
+|»»» title|string|false|none|none|
+|»»» price_to_view|number|false|none|none|
+|»»» authorID_str|string|false|none|none|
+|»»» authorID|string|false|none|none|
+|»»» userID_str|string|false|none|none|
+|»»» userID|string|false|none|none|
+|»»» created_at|number|false|none|none|
+|»»» published_at|number|false|none|none|
+|»»» is_nsfw|boolean|false|none|none|
+|»»» is_hidden|boolean|false|none|none|
+|»»» tags|[string]|false|none|none|
+|»»» comment_count|number|false|none|none|
+|»»» can_edit|boolean|false|none|none|
+|»»» locked|number|false|none|none|
+|»»» payment_error|string|false|none|none|
+
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
 ApiKeyAuth
@@ -1433,13 +1358,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/posts/{userID}/post/{postID}', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/posts/{userID}/post/{postID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/posts/{userID}/post/{postID}`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/posts/{userID}/post/{postID}
+</p>
 
 <h3 id="get-a-single-post-from-a-creator-parameters">Parameters</h3>
 
@@ -1581,13 +1509,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.delete('https://api-dev.sponsus.org/v1/posts/{userID}/post/{postID}', headers = headers)
+r = requests.delete('https://api.sponsus.org/v1/posts/{userID}/post/{postID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`DELETE /v1/posts/{userID}/post/{postID}`
+<p class="path-string">
+    <span class="method-tag">DELETE</span>
+    /v1/posts/{userID}/post/{postID}
+</p>
 
 Requires posts.manage_posts.write
 
@@ -1634,13 +1565,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/posts/{userID}/post/{postID}', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/posts/{userID}/post/{postID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/posts/{userID}/post/{postID}`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/posts/{userID}/post/{postID}
+</p>
 
 Requires posts.manage_posts.write
 
@@ -1671,7 +1605,7 @@ Requires posts.manage_posts.write
       "string"
     ]
   },
-  "publish_at": "2020-01-30T05:26:16Z",
+  "publish_at": "2020-01-30T10:23:26Z",
   "showing": "string",
   "type": "string"
 }
@@ -1741,13 +1675,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/posts/{userID}/post/{postID}/publish', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/posts/{userID}/post/{postID}/publish', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/posts/{userID}/post/{postID}/publish`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/posts/{userID}/post/{postID}/publish
+</p>
 
 Publishes a previously hidden post for viewing by either sponsors or the public. This will trigger all after-publish hooks such as notifications. **This can only be done once per post and is not reversable.**
 
@@ -1794,13 +1731,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/posts/@me/post/{postID}/secret_keys', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/posts/@me/post/{postID}/secret_keys', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/posts/@me/post/{postID}/secret_keys`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/posts/@me/post/{postID}/secret_keys
+</p>
 
 Requires posts.secret_keys.read
 
@@ -1877,13 +1817,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/posts/@me/post/{postID}/secret_keys', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/posts/@me/post/{postID}/secret_keys', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/posts/@me/post/{postID}/secret_keys`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/posts/@me/post/{postID}/secret_keys
+</p>
 
 Requires posts.secret_keys.write
 
@@ -1893,7 +1836,7 @@ Requires posts.secret_keys.write
 {
   "name": "string",
   "uses": 0,
-  "expires_at": "2020-01-30T05:26:16Z"
+  "expires_at": "2020-01-30T10:23:26Z"
 }
 ```
 
@@ -1901,7 +1844,7 @@ Requires posts.secret_keys.write
 <?xml version="1.0" encoding="UTF-8" ?>
 <name>string</name>
 <uses>0</uses>
-<expires_at>2020-01-30T05:26:16Z</expires_at>
+<expires_at>2020-01-30T10:23:26Z</expires_at>
 ```
 
 <h3 id="create-a-new-secret-key-parameters">Parameters</h3>
@@ -1978,13 +1921,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.delete('https://api-dev.sponsus.org/v1/posts/@me/post/{postID}/secret_keys/{keyID}', headers = headers)
+r = requests.delete('https://api.sponsus.org/v1/posts/@me/post/{postID}/secret_keys/{keyID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`DELETE /v1/posts/@me/post/{postID}/secret_keys/{keyID}`
+<p class="path-string">
+    <span class="method-tag">DELETE</span>
+    /v1/posts/@me/post/{postID}/secret_keys/{keyID}
+</p>
 
 Delete a secret key
 
@@ -2033,13 +1979,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/payments/@me/tiers', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/payments/@me/tiers', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/payments/@me/tiers`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/payments/@me/tiers
+</p>
 
 Requires payments.tiers.write
 
@@ -2127,13 +2076,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/payments/@me/tiers', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/payments/@me/tiers', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/payments/@me/tiers`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/payments/@me/tiers
+</p>
 
 Requires payments.tiers.read
 
@@ -2222,13 +2174,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.delete('https://api-dev.sponsus.org/v1/payments/@me/tiers/{tierID}', headers = headers)
+r = requests.delete('https://api.sponsus.org/v1/payments/@me/tiers/{tierID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`DELETE /v1/payments/@me/tiers/{tierID}`
+<p class="path-string">
+    <span class="method-tag">DELETE</span>
+    /v1/payments/@me/tiers/{tierID}
+</p>
 
 Delete a tier
 
@@ -2274,13 +2229,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/payments/@me/tiers/{tierID}', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/payments/@me/tiers/{tierID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/payments/@me/tiers/{tierID}`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/payments/@me/tiers/{tierID}
+</p>
 
 Requires payments.tiers.write
 
@@ -2352,6 +2310,131 @@ To perform this operation, you must be authenticated by means of one of the foll
 ApiKeyAuth
 </aside>
 
+## List sponsors
+
+<a id="opIdpayments.list_sponsors"></a>
+
+> Code samples
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json',
+  'Authorization': 'API_KEY'
+}
+
+r = requests.get('https://api.sponsus.org/v1/search/@me/sponsors', headers = headers)
+
+print(r.json())
+
+```
+
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/search/@me/sponsors
+</p>
+
+List all of your sponsors as well as filter them.
+
+<h3 id="list-sponsors-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|tier|query|string|false|The tierID that you wish to filter results from. If present and `tier_only` is not/is false then the price of the tier will be used as a filter instead.|
+|username|query|string|false|The username you wish to filter for|
+|paid_only|query|string|false|Only returns results for users who have paid in the last month|
+|tier_only|query|string|false|Only returns results for users who are sponsoring a tier|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "success": true,
+  "results": [
+    {
+      "username": "string",
+      "_id": "string",
+      "cards": [
+        {
+          "title": "string",
+          "content": "string",
+          "image": "string",
+          "link": "string"
+        }
+      ],
+      "nickname": "string",
+      "status": "string",
+      "theme": "string",
+      "about": "string",
+      "description": "string",
+      "created_at": "string",
+      "tier": {
+        "_id": "string",
+        "title": "string",
+        "price": 0,
+        "description": "string",
+        "userID": "string",
+        "advanced": {},
+        "created_at": 0,
+        "support": {
+          "is_supporting": true
+        }
+      },
+      "total": 0,
+      "lifetime": 0
+    }
+  ]
+}
+```
+
+<h3 id="list-sponsors-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|Inline|
+
+<h3 id="list-sponsors-responseschema">Response Schema</h3>
+
+Status Code **200**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|» success|boolean|false|none|none|
+|» results|[object]|false|none|none|
+|»» username|string|false|none|none|
+|»» _id|string|false|none|none|
+|»» cards|[[ProfileCard](#schemaprofilecard)]|false|none|none|
+|»»» ProfileCard|[ProfileCard](#schemaprofilecard)|false|none|none|
+|»»»» title|string|false|none|none|
+|»»»» content|string|false|none|none|
+|»»»» image|string|false|none|none|
+|»»»» link|string|false|none|none|
+|»» nickname|string|false|none|none|
+|»» status|string|false|none|none|
+|»» theme|string|false|none|none|
+|»» about|string|false|none|none|
+|»» description|string|false|none|none|
+|»» created_at|string|false|none|none|
+|»» tier|[Tier](#schematier)|false|none|A tier for a creator.|
+|»»» _id|string|true|none|none|
+|»»» title|string|true|none|none|
+|»»» price|number|true|none|none|
+|»»» description|string|true|none|none|
+|»»» userID|string|true|none|none|
+|»»» advanced|object|false|none|none|
+|»»» created_at|number|false|none|none|
+|»»» support|[Support](#schemasupport)|false|none|none|
+|»»»» is_supporting|boolean|false|none|none|
+|»» total|number|false|none|Total this user has sponsored THIS MONTH.|
+|»» lifetime|number|false|none|Collective total of all sponsorships this user has paid towards you.|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+ApiKeyAuth
+</aside>
+
 ## Get my monthly stats
 
 <a id="opIdpayments.payment_stats"></a>
@@ -2365,13 +2448,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/payments/@me/statistics', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/payments/@me/statistics', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/payments/@me/statistics`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/payments/@me/statistics
+</p>
 
 Requires payments.stats.read
 Get the monthly stats for the user.
@@ -2425,13 +2511,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/payments/{userID}/tiers', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/payments/{userID}/tiers', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/payments/{userID}/tiers`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/payments/{userID}/tiers
+</p>
 
 Gets the creators tiers for display on the front end. If you want to edit tiers, use /payments/@me/tiers.
 
@@ -2493,13 +2582,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/payments/{userID}/tiers/{tierID}', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/payments/{userID}/tiers/{tierID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/payments/{userID}/tiers/{tierID}`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/payments/{userID}/tiers/{tierID}
+</p>
 
 Get a single tier
 
@@ -2555,13 +2647,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/payments/{userID}/tiers/{tierID}/remaining_slots', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/payments/{userID}/tiers/{tierID}/remaining_slots', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/payments/{userID}/tiers/{tierID}/remaining_slots`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/payments/{userID}/tiers/{tierID}/remaining_slots
+</p>
 
 Tells you how many slots are open for sponsorships. Used in the UI to show how many are left.
 
@@ -2617,13 +2712,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/payments/@me/supporting', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/payments/@me/supporting', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/payments/@me/supporting`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/payments/@me/supporting
+</p>
 
 Requires payments.sponsoring.read
 
@@ -2695,13 +2793,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/payments/{userID}/sponsoring', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/payments/{userID}/sponsoring', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/payments/{userID}/sponsoring`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/payments/{userID}/sponsoring
+</p>
 
 Gets an IncomingSponsorship object if the target user is sponsoring you.
 
@@ -2775,13 +2876,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/payments/{userID}/donations/settings', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/payments/{userID}/donations/settings', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/payments/{userID}/donations/settings`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/payments/{userID}/donations/settings
+</p>
 
 Get a creators donation settings
 
@@ -2838,13 +2942,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/payments/@me/charges', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/payments/@me/charges', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/payments/@me/charges`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/payments/@me/charges
+</p>
 
 Requires payments.charges.read
 
@@ -2903,13 +3010,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/oauth/@me/profile', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/oauth/@me/profile', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/oauth/@me/profile`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/oauth/@me/profile
+</p>
 
 > Example responses
 
@@ -2980,13 +3090,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/files/@me', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/files/@me', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/files/@me`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/files/@me
+</p>
 
 Requires files.manage_files.read
 
@@ -3055,13 +3168,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/files/@me', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/files/@me', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/files/@me`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/files/@me
+</p>
 
 Requires files.manage_files.write
 
@@ -3128,13 +3244,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.delete('https://api-dev.sponsus.org/v1/files/@me/{fileID}', headers = headers)
+r = requests.delete('https://api.sponsus.org/v1/files/@me/{fileID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`DELETE /v1/files/@me/{fileID}`
+<p class="path-string">
+    <span class="method-tag">DELETE</span>
+    /v1/files/@me/{fileID}
+</p>
 
 Requires files.manage_files.write
 
@@ -3181,13 +3300,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/search', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/search', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/search`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/search
+</p>
 
 > Example responses
 
@@ -3261,13 +3383,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/feed/@me', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/feed/@me', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/feed/@me`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/feed/@me
+</p>
 
 > Example responses
 
@@ -3404,13 +3529,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/feed/@me/total', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/feed/@me/total', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/feed/@me/total`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/feed/@me/total
+</p>
 
 Used to check if the UI should update
 
@@ -3461,13 +3589,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/chat/@me/new_conversation', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/chat/@me/new_conversation', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/chat/@me/new_conversation`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/chat/@me/new_conversation
+</p>
 
 > Body parameter
 
@@ -3551,13 +3682,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/chat/@me/conversations', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/chat/@me/conversations', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/chat/@me/conversations`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/chat/@me/conversations
+</p>
 
 > Example responses
 
@@ -3625,13 +3759,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/chat/{convoID}/rtm/start', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/chat/{convoID}/rtm/start', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/chat/{convoID}/rtm/start`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/chat/{convoID}/rtm/start
+</p>
 
 Requires chat.live_messages.read
 
@@ -3690,13 +3827,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/chat/@me/rtm/unread/start', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/chat/@me/rtm/unread/start', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/chat/@me/rtm/unread/start`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/chat/@me/rtm/unread/start
+</p>
 
 Requires chat.manage_messages.read
 
@@ -3751,13 +3891,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/chat/{convoID}/messages', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/chat/{convoID}/messages', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/chat/{convoID}/messages`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/chat/{convoID}/messages
+</p>
 
 <h3 id="list-a-conversation's-messages-parameters">Parameters</h3>
 
@@ -3841,13 +3984,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/chat/{convoID}/messages', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/chat/{convoID}/messages', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/chat/{convoID}/messages`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/chat/{convoID}/messages
+</p>
 
 Requires chat.manage_messages.write
 
@@ -3950,13 +4096,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.delete('https://api-dev.sponsus.org/v1/chat/{convoID}/members/{userID}', headers = headers)
+r = requests.delete('https://api.sponsus.org/v1/chat/{convoID}/members/{userID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`DELETE /v1/chat/{convoID}/members/{userID}`
+<p class="path-string">
+    <span class="method-tag">DELETE</span>
+    /v1/chat/{convoID}/members/{userID}
+</p>
 
 **This will not work as there is a max limit of users in a convo set to 2. If you want to close a DM for good then you must block the other user.**
 
@@ -3991,13 +4140,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.delete('https://api-dev.sponsus.org/v1/chat/{convoID}/messages/{messageID}', headers = headers)
+r = requests.delete('https://api.sponsus.org/v1/chat/{convoID}/messages/{messageID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`DELETE /v1/chat/{convoID}/messages/{messageID}`
+<p class="path-string">
+    <span class="method-tag">DELETE</span>
+    /v1/chat/{convoID}/messages/{messageID}
+</p>
 
 Requires chat.manage_messages.write
 
@@ -4045,13 +4197,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/chat/{convoID}/messages/{messageID}', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/chat/{convoID}/messages/{messageID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/chat/{convoID}/messages/{messageID}`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/chat/{convoID}/messages/{messageID}
+</p>
 
 Requires chat.manage_messages.write
 
@@ -4118,13 +4273,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/chat/{convoID}/ack', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/chat/{convoID}/ack', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/chat/{convoID}/ack`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/chat/{convoID}/ack
+</p>
 
 Marks the messages as being read.
 
@@ -4193,13 +4351,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/chat/@me/unread', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/chat/@me/unread', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/chat/@me/unread`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/chat/@me/unread
+</p>
 
 Get unread count from all conversations
 
@@ -4247,13 +4408,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/chat/@me/block_list', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/chat/@me/block_list', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/chat/@me/block_list`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/chat/@me/block_list
+</p>
 
 Requires chat.manage_blocklist.read
 
@@ -4347,13 +4511,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/chat/@me/block_list', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/chat/@me/block_list', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/chat/@me/block_list`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/chat/@me/block_list
+</p>
 
 Requires chat.manage_blocklist.write
 
@@ -4412,13 +4579,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.delete('https://api-dev.sponsus.org/v1/chat/@me/block_list/{targetID}', headers = headers)
+r = requests.delete('https://api.sponsus.org/v1/chat/@me/block_list/{targetID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`DELETE /v1/chat/@me/block_list/{targetID}`
+<p class="path-string">
+    <span class="method-tag">DELETE</span>
+    /v1/chat/@me/block_list/{targetID}
+</p>
 
 <h3 id="unblock-a-user-parameters">Parameters</h3>
 
@@ -4463,13 +4633,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/comments/{postID}/comment/{commentID}/replies', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/comments/{postID}/comment/{commentID}/replies', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/comments/{postID}/comment/{commentID}/replies`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/comments/{postID}/comment/{commentID}/replies
+</p>
 
 <h3 id="get-a-comment's-replies-parameters">Parameters</h3>
 
@@ -4550,13 +4723,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/comments/{postID}/comment/{commentID}/replies', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/comments/{postID}/comment/{commentID}/replies', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/comments/{postID}/comment/{commentID}/replies`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/comments/{postID}/comment/{commentID}/replies
+</p>
 
 Requires comments.manage_comments.write
 
@@ -4612,13 +4788,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/comments/{postID}/comment/{commentID}/replies/stats', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/comments/{postID}/comment/{commentID}/replies/stats', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/comments/{postID}/comment/{commentID}/replies/stats`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/comments/{postID}/comment/{commentID}/replies/stats
+</p>
 
 <h3 id="get-a-comment's-replies-statistics-parameters">Parameters</h3>
 
@@ -4671,13 +4850,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/comments/{postID}', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/comments/{postID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/comments/{postID}`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/comments/{postID}
+</p>
 
 Requires comments.manage_comments.read
 
@@ -4764,13 +4946,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/comments/{postID}', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/comments/{postID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/comments/{postID}`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/comments/{postID}
+</p>
 
 Requires comments.manage_comments.write
 
@@ -4826,13 +5011,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.delete('https://api-dev.sponsus.org/v1/comments/{postID}/comment/{commentID}', headers = headers)
+r = requests.delete('https://api.sponsus.org/v1/comments/{postID}/comment/{commentID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`DELETE /v1/comments/{postID}/comment/{commentID}`
+<p class="path-string">
+    <span class="method-tag">DELETE</span>
+    /v1/comments/{postID}/comment/{commentID}
+</p>
 
 Requires comments.manage_comments.write
 
@@ -4882,13 +5070,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/comments/{postID}/comment/{commentID}', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/comments/{postID}/comment/{commentID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/comments/{postID}/comment/{commentID}`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/comments/{postID}/comment/{commentID}
+</p>
 
 Requires comments.manage_comments.write
 
@@ -4949,13 +5140,16 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/auth/@me', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/auth/@me', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/auth/@me`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/auth/@me
+</p>
 
 Update user account
 
@@ -5019,13 +5213,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/permissions/@me/teams', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/permissions/@me/teams', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/permissions/@me/teams`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/permissions/@me/teams
+</p>
 
 Requires teams.teams.read
 
@@ -5119,13 +5316,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.delete('https://api-dev.sponsus.org/v1/permissions/{creatorID}/team/{userID}', headers = headers)
+r = requests.delete('https://api.sponsus.org/v1/permissions/{creatorID}/team/{userID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`DELETE /v1/permissions/{creatorID}/team/{userID}`
+<p class="path-string">
+    <span class="method-tag">DELETE</span>
+    /v1/permissions/{creatorID}/team/{userID}
+</p>
 
 Requires teams.teams.write
 
@@ -5173,13 +5373,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/permissions/{creatorID}/team/{userID}', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/permissions/{creatorID}/team/{userID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/permissions/{creatorID}/team/{userID}`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/permissions/{creatorID}/team/{userID}
+</p>
 
 Requires teams.teams.write
 
@@ -5239,13 +5442,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/permissions/{creatorID}/team/accept_invite', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/permissions/{creatorID}/team/accept_invite', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/permissions/{creatorID}/team/accept_invite`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/permissions/{creatorID}/team/accept_invite
+</p>
 
 Requires teams.teams.write
 
@@ -5293,13 +5499,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/permissions/@me/team/{userID}/invite', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/permissions/@me/team/{userID}/invite', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/permissions/@me/team/{userID}/invite`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/permissions/@me/team/{userID}/invite
+</p>
 
 Requires teams.teams.write
 
@@ -5353,7 +5562,7 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/permissions/@me/team/search', params={
+r = requests.get('https://api.sponsus.org/v1/permissions/@me/team/search', params={
   'q': 'string'
 }, headers = headers)
 
@@ -5361,7 +5570,10 @@ print(r.json())
 
 ```
 
-`GET /v1/permissions/@me/team/search`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/permissions/@me/team/search
+</p>
 
 Requires teams.teams.read
 
@@ -5426,13 +5638,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.delete('https://api-dev.sponsus.org/v1/permissions/@me/roles/{roleID}', headers = headers)
+r = requests.delete('https://api.sponsus.org/v1/permissions/@me/roles/{roleID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`DELETE /v1/permissions/@me/roles/{roleID}`
+<p class="path-string">
+    <span class="method-tag">DELETE</span>
+    /v1/permissions/@me/roles/{roleID}
+</p>
 
 <h3 id="delete-a-role-parameters">Parameters</h3>
 
@@ -5478,13 +5693,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.post('https://api-dev.sponsus.org/v1/permissions/@me/roles/{roleID}', headers = headers)
+r = requests.post('https://api.sponsus.org/v1/permissions/@me/roles/{roleID}', headers = headers)
 
 print(r.json())
 
 ```
 
-`POST /v1/permissions/@me/roles/{roleID}`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/permissions/@me/roles/{roleID}
+</p>
 
 Requires teams.roles.write
 
@@ -5549,13 +5767,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/permissions/@me/roles', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/permissions/@me/roles', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/permissions/@me/roles`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/permissions/@me/roles
+</p>
 
 Requires teams.roles.read
 
@@ -5630,13 +5851,16 @@ headers = {
   'Authorization': 'API_KEY'
 }
 
-r = requests.get('https://api-dev.sponsus.org/v1/permissions/@me/team', headers = headers)
+r = requests.get('https://api.sponsus.org/v1/permissions/@me/team', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /v1/permissions/@me/team`
+<p class="path-string">
+    <span class="method-tag">GET</span>
+    /v1/permissions/@me/team
+</p>
 
 Requires teams.teams.read
 
@@ -5727,13 +5951,16 @@ ApiKeyAuth
 ```python
 import requests
 
-r = requests.post('https://api-dev.sponsus.org/v1/permissions/@me/roles')
+r = requests.post('https://api.sponsus.org/v1/permissions/@me/roles')
 
 print(r.json())
 
 ```
 
-`POST /v1/permissions/@me/roles`
+<p class="path-string">
+    <span class="method-tag">POST</span>
+    /v1/permissions/@me/roles
+</p>
 
 <h3 id="perm.manage_creator_roles.post-responses">Responses</h3>
 

@@ -24,6 +24,12 @@ under the License.
 // GENERAL STUFF
 ////////////////////////////////////////////////////////////////////////////////
 
+@import url("https://fonts.googleapis.com/css?family=Nunito:400,600,700,800&display=swap");html {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%
+}
+
 html, body {
   color: $main-text;
   padding: 0;
@@ -563,21 +569,33 @@ html, body {
 // This is all the stuff that appears in the right half of the page
 
 .content {
+  blockquote {
+    overflow:hidden;
+  }
+  pre {
+    white-space: pre-wrap;
+  }
   pre, blockquote {
     background-color: $code-bg;
     color: #fff;
 
-    margin: 0;
-    width: $examples-width;
+    width:47.5%;
+    margin-right:14px;
+    margin-top:-10px;
 
     float:right;
     clear:right;
 
     box-sizing: border-box;
+    border-radius:6px;
 
     @extend %right-col;
 
-    &>p { margin: 0; }
+    &>p {
+      margin: 0;
+      font-weight:600;
+      font-size:1.1em;
+    }
 
     a {
       color: #fff;
@@ -656,6 +674,12 @@ html, body {
   %right-col + %left-col {
     margin-top: $main-padding;
   }
+
+  .content pre, .content blockquote {
+    margin-top:6px;
+    margin: auto;
+    border-radius:0px;
+  }
 }
 
 .highlight .c, .highlight .cm, .highlight .c1, .highlight .cs {
@@ -682,4 +706,27 @@ html, body {
 }
 .toc-h1.toc-link {
   text-transform: capitalize;
+}
+
+.method-tag {
+  align-items: center;
+  border-radius: 4px;
+  display: inline-flex;
+  height: 2em;
+  justify-content: center;
+  line-height: 1.5;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  white-space: nowrap;
+  background:#0a62ac;
+  color:whitesmoke;
+  vertical-align: text-top;
+  font-size: 16px;
+  margin-top: 3px;
+}
+
+.path-string {
+  font-size: 2em;
+  font-weight: 800;
+  margin-top:-10px;
 }
