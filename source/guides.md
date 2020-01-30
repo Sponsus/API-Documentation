@@ -134,7 +134,7 @@ Parameter | Description
 ***Required*** <br /> response_type | OAuth grant type. Set this to code.
 ***Required*** <br /> client_id | Your client ID
 ***Required*** <br /> redirect_uri | One of your redirect_uris that you provided in step 1
-***Required (at least one)*** <br /> scope | This parameter will allow your app to read/write to the given scope. For a list of valid scopes, [click here!](#scopes). It will be displayed to the user in human-friendly terms when signing in with Patreon
+***Required (at least one)*** <br /> scope | This parameter will allow your app to read/write to the given scope. For a list of valid scopes, [click here!](#scopes). It will be displayed to the user in human-friendly terms when signing in.
 state | This will be added to the redirect URI when the user has authorized or denied the OAuth flow.
 
 ### An example of the page you should get:

@@ -1454,6 +1454,8 @@ paths:
                       oneOf:
                         - $ref: '#/components/schemas/Post'
                         - $ref: '#/components/schemas/LockedPost'
+                      discriminator:
+                        propertyName: locked
       deprecated: false
       security:
         - ApiKeyAuth: []
