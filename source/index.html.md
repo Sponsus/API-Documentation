@@ -432,7 +432,7 @@ Replace \<userID> with the ID of the user you wish to grab the information for.
 `GET https://api.sponsus.org/v1/payments/<userID>/sponsoring`<br/>---
 
 
-# --- API Reference ---
+# 🔧 API Reference
  
 Everything past this point is the API reference. You can find the OpenAPI 3 spec that this was generated from [here](https://github.com/Sponsus/API-Documentation/spec/openapi3.yaml)
 
@@ -1190,7 +1190,7 @@ Creates a new post
   "price_to_view": "string",
   "content": "string",
   "showing": "string",
-  "publish_at": "2020-01-30T04:08:27Z",
+  "publish_at": "2020-01-30T05:26:16Z",
   "image": {
     "src": [
       "string"
@@ -1671,7 +1671,7 @@ Requires posts.manage_posts.write
       "string"
     ]
   },
-  "publish_at": "2020-01-30T04:08:27Z",
+  "publish_at": "2020-01-30T05:26:16Z",
   "showing": "string",
   "type": "string"
 }
@@ -1893,7 +1893,7 @@ Requires posts.secret_keys.write
 {
   "name": "string",
   "uses": 0,
-  "expires_at": "2020-01-30T04:08:27Z"
+  "expires_at": "2020-01-30T05:26:16Z"
 }
 ```
 
@@ -1901,7 +1901,7 @@ Requires posts.secret_keys.write
 <?xml version="1.0" encoding="UTF-8" ?>
 <name>string</name>
 <uses>0</uses>
-<expires_at>2020-01-30T04:08:27Z</expires_at>
+<expires_at>2020-01-30T05:26:16Z</expires_at>
 ```
 
 <h3 id="create-a-new-secret-key-parameters">Parameters</h3>

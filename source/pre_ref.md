@@ -1,6 +1,6 @@
 
 
-# --- API Reference ---
+# 🔧 API Reference
  
 Everything past this point is the API reference. You can find the OpenAPI 3 spec that this was generated from [here](https://github.com/Sponsus/API-Documentation/spec/openapi3.yaml)
 
