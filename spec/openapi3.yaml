@@ -2,14 +2,14 @@ openapi: 3.0.0
 info:
   title: Sponsus API
   contact:
-    name: Sponsus
+    name: Sponsus dev team
     email: developers@sponsus.org
-  version: 1.0.1
+  version: 1.1.0
   description: API spec for api.sponsus.org
 servers:
-  - url: 'https://api-dev.sponsus.org'
+  - url: 'https://api.sponsus.org'
     variables: {}
-    description: Dev server
+    description: The main API server
 paths:
   /v1/auth/@me:
     post:
@@ -1330,6 +1330,8 @@ paths:
   /v1/search/@me/sponsors:
     get:
       summary: List sponsors
+      tags:
+        - payments
       operationId: payments.list_sponsors
       responses:
         '200':
